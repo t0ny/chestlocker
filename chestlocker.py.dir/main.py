@@ -24,7 +24,7 @@ def loadsettings():
 		settings['%s' % i.split(":")[0]] = ":".join(i.split("#")[0].split(":")[1:]).rstrip()
 	f.close()
 	return settings
-	
+
 def loaddb():
 	try:
 		f = open("plugins/chestlocker.db")
@@ -62,7 +62,7 @@ def indexIncr(name):
 	db['index'][name] = count
 	savedb(db)
 	return count
-	
+
 class Chest:
 	def __init__(self, block):
 		self.block = block
@@ -71,35 +71,35 @@ class Chest:
 			self.owner = None
 		else:
 			self.owner = Player(self.chest['player'])
-		
+	
 	def getChest(self):
 		global db
-
+		
 		for i in db['chests']:
 			if (i['x'] == self.block.getX() and i['y'] == self.block.getY() and i['z'] == self.block.getZ() and i['world'] == str(self.block.getWorld().getUID())):
 				return i
-
+		
 		attached = findAttachedChest(self.block)
-
+		
 		if attached != None: #look again to see if the attached chest is locked.
 			for i in db['chests']:
 				if (i['x'] == attached.getX() and i['y'] == attached.getY() and i['z'] == attached.getZ() and attached['world'] == str(self.block.getWorld().getUID())):
 					return i
-
-		return None
 		
+		return None
+	
 	def isLocked(self):
 		global settings, debug, db
-
+		
 		if type(self.chest) != NoneType and self.chest != None:
 			assert type(self.chest) != NoneType
-
+			
 			if self.owner.isOverQuota():
 				self.unlockChest(self.owner.name)
 				self.owner.msg("One of your chests has been unlocked because you are over quota.")
 				if debug:
 					print "Remove a chest lock because it user is over quota."
-
+		
 		if self.chest == None:
 			return 0
 		else:
@@ -109,8 +109,8 @@ class Chest:
 		if self.chest != None:
 			if str(self.owner) == str(player):
 				return 1
-		return 0	
-			
+		return 0
+	
 	def lockChest(self, player):
 		global db
 		self.chest = dict(
@@ -123,10 +123,10 @@ class Chest:
 						)
 		db['chests'].append(self.chest)
 		savedb(db)
-
+	
 	def unlockChest(self, player):
 		global db
-			
+		
 		db['chests'].remove(self.chest)
 		
 		self.chest = None
@@ -157,13 +157,13 @@ class Player:
 	
 	def chestCount(self):
 		return len(self.getChests())
-
+	
 	def maxlocks(self): #calculates the max locks a player can have
 		global settings
-
+		
 		if self.b.hasPermission("chestlocker.unlimited") or int(settings['maxlocks']) == -1:
 			return -1
-			
+		
 		return int(settings['maxlocks']) + len(self.credits())
 	
 	def addCredit(self, duration = 0):
@@ -199,7 +199,7 @@ class Player:
 				expiretime = expiretime
 				)
 		
-		print c 
+		print c
 		
 		db['credits'].append(c)
 		savedb(db)
@@ -213,17 +213,17 @@ class Player:
 					out.append(i)
 		print out
 		return out
-
+	
 	def isOverQuota(self, willbe = 0):
 		if self.maxlocks() == -1:
 			return 0
-			
+		
 		return self.chestCount() + willbe > self.maxlocks()
-
+	
 	def showInfo(self):
 		if self.isOverQuota():
 			self.msg("You are currently over quota.")
-			
+		
 		self.msg("You have %s locked chest(s)." % self.chestCount())
 		
 		if self.maxlocks() == -1:
@@ -232,21 +232,21 @@ class Player:
 			self.msg("You have %s lock(s)." % self.maxlocks())
 		
 		self.msg("You have %s credit(s)." % len(self.credits()))
-		
+
 def findAttachedChest(block):
 	for i in [BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST]:
 		b = block.getRelative(i, 1)
 		
 		if str(b.getType()) == "CHEST":
 			return b
-
+	
 	return None
-		
+
 @hook.enable
 def onenable():
 	print "Chest Locker Pro 3000 Ultra EXTREME EDITION. By Tony Speer"
 	initalize()
-	
+
 @hook.event("Player_join", "normal")
 def onPlayerJoin(event):
 	player = Player(event.getPlayer().getName())
@@ -258,8 +258,8 @@ def onPlayerJoin(event):
 		if player.isOverQouta():
 			player.msg("You are %s lock(s) over your allowed limit." % (x - player.maxlocks()))
 			player.msg("%s lock(s) will be disabled next time they are touched." % (x - player.maxlocks()))
-			
 	
+
 @hook.command
 def cl(sender, args):
 	global settings
@@ -294,7 +294,7 @@ def cl(sender, args):
 					sender.sendMessage("Chest is now locked.")
 				else:
 					sender.sendMessage("This chest is already locked.")
-					
+			
 			else:
 				sender.sendMessage("I can't lock this. Try looking at a chest. Dummy.")
 	elif args[0] == "unlock" and sender.hasPermission("chestlocker.unlock"):
@@ -311,9 +311,9 @@ def cl(sender, args):
 					sender.sendMessage("You do not own this chest. You can't unlock it.")
 			else:
 				sender.sendMessage("This chest is not locked.")
-	elif args[0] == "info" and sender.hasPermission("chestlocker.info"):		
+	elif args[0] == "info" and sender.hasPermission("chestlocker.info"):
 		player.showInfo()
-				
+		
 		if sender.hasPermission("chestlocker.globalinfo"):
 			pass
 	elif args[0] == "credit" and sender.hasPermission("chestlocker.credit"):
@@ -328,15 +328,15 @@ def cl(sender, args):
 		player.msg("Reloading chestlocker.")
 		initalize()
 		player.msg("Finished.")
-	
+
 @hook.event("block_break", "high")
 def onBlockBreak(event):
 	global debug
 	
 	block = event.getBlock()
-
+	
 	if str(block.type) == "CHEST":
-		chest = Chest(block)	
+		chest = Chest(block)
 		if chest.isLocked():
 			event.setCancelled(True)
 			event.getPlayer().sendMessage("This chest is locked. You can't break it.")
@@ -344,9 +344,9 @@ def onBlockBreak(event):
 @hook.event("block_damage", "high")
 def onBlockDamange(event):
 	global debug
-
+	
 	block = event.getBlock()
-
+	
 	if str(block.type) == "CHEST":
 		chest = Chest(block)
 		if chest.isLocked():
