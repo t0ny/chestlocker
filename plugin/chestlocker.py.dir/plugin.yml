@@ -1,0 +1,23 @@
+name: chestlocker
+main: main.py
+version: 0.1
+
+permissions:
+    chestlocker.unlimited:
+        default: false
+    chestlocker.lock:
+        default: true
+    chestlocker.unlock:
+        default: true
+    chestlocker.chestcount:
+        default: true
+    chestlocker.info:
+        default: true
+    chestlocker.seeowner:
+        default: true
+    chestlocker.globalinfo:
+        default: op
+    chestlocker.credit:
+        default: op
+    chestlocker.reload:
+        default: op
