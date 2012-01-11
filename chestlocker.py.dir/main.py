@@ -83,7 +83,7 @@ class Chest:
         
         if attached != None: #look again to see if the attached chest is locked.
             for i in db['chests']:
-                if (i['x'] == attached.getX() and i['y'] == attached.getY() and i['z'] == attached.getZ() and attached['world'] == str(self.block.getWorld().getUID())):
+                if (i['x'] == attached.getX() and i['y'] == attached.getY() and i['z'] == attached.getZ() and i['world'] == str(attached.getWorld().getUID())):
                     return i
         
         return None
@@ -244,7 +244,12 @@ def findAttachedChest(block):
 
 @hook.enable
 def onenable():
+    global debug
     print "Chest Locker Pro 3000 Ultra EXTREME EDITION. By Tony Speer"
+
+    if debug:
+        print "Chest locker debug mode is on."
+        
     initalize()
 
 @hook.event("Player_join", "normal")

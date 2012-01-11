@@ -2,6 +2,12 @@
 
 This page is not yet finished.
 
+## Change log ##
+
+* Version 0.11
+    * Changed from tabs to 4 spaces.
+    * Fixed a bug with double chests.
+    
 ## Installation ##
 
 * Download and Install Python Plugin Loader. [Found here](http://dev.bukkit.org/server-mods/python-plugin-loader/).
