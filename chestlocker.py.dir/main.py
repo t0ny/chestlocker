@@ -247,9 +247,6 @@ def findAttachedChest(block):
         b = block.getRelative(i, 1)
         
         if str(b.getType()) == "CHEST":
-            if debug:
-                print "Found attached chest", b
-                
             return b
     
     return None
@@ -330,7 +327,6 @@ def cl(sender, args):
             else:
                 sender.sendMessage("This chest is not locked.")
     elif args[0] == "info" and sender.hasPermission("chestlocker.info"):
-        #print sender, type(sender)
         player.showInfo()
         
         if sender.hasPermission("chestlocker.globalinfo"):
