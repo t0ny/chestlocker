@@ -7,6 +7,9 @@ This page is not yet finished.
 * Version 0.11
     * Changed from tabs to 4 spaces.
     * Fixed a bug with double chests.
+    * Fixed a number of bugs.
+    * Improved the player class. Can now take in a player object or string.
+    * Other minor things.
     
 ## Installation ##
 
@@ -33,3 +36,7 @@ The config file is named **chestlocker.cfg** located in the **plugins** folder. 
 	assumed that the time is a day.
 * /cl info
 	* Shows some information about your chests and credits.
+
+## Permissions ##
+
+See the plugin.yml file. I'll update the readme soon.
