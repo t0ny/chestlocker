@@ -1,6 +1,8 @@
 import os, pickle
 import org.bukkit.block.BlockFace as BlockFace
 import org.bukkit.Bukkit as bukkit
+import org.bukkit.craftbukkit.entity.CraftPlayer
+import org.bukkit.craftbukkit.command.ColouredConsoleSender
 from types import *
 from datetime import datetime, timedelta
 
@@ -134,10 +136,20 @@ class Chest:
         savedb(db)
 
 class Player:
-    def __init__(self, name):
-        self.name = name
-        self.b = bukkit.getPlayerExact(self.name) # bukkit class for player
-    
+    def __init__(self, player):
+        if type(player) == str:
+            self.name = player
+            self.b = bukkit.getPlayerExact(self.name) # bukkit class for player
+        elif type(player) == org.bukkit.craftbukkit.entity.CraftPlayer:
+            self.name = player.getName()
+            self.b = player
+        elif type(player) == org.bukkit.craftbukkit.command.ColouredConsoleSender:
+            self.b = player
+            self.name = "Console"
+        else:
+            print "ERROR: Could not find player", type(player), player
+            raise ValueError
+        
     def __str__(self):
         return self.name
     
@@ -254,13 +266,13 @@ def onenable():
 
 @hook.event("Player_join", "normal")
 def onPlayerJoin(event):
-    player = Player(event.getPlayer().getName())
+    player = Player(event.getPlayer())
     
     x = player.chestCount()
     
     if x > 0:
         player.msg("You have %s locked chest(s)." % str(x))
-        if player.isOverQouta():
+        if player.isOverQuota():
             player.msg("You are %s lock(s) over your allowed limit." % (x - player.maxlocks()))
             player.msg("%s lock(s) will be disabled next time they are touched." % (x - player.maxlocks()))
     
@@ -269,7 +281,7 @@ def onPlayerJoin(event):
 def cl(sender, args):
     global settings
     
-    player = Player(sender.getName())
+    player = Player(sender)
     
     if len(args) < 1:
         sender.sendMessage("Chestlock command usage:")
@@ -310,20 +322,21 @@ def cl(sender, args):
         else:
             chest = Chest(blocks[-1])
             if chest.isLocked():
-                if chest.isOwner(sender.getName()):
-                    chest.unlockChest(sender.getName())
+                if chest.isOwner(sender):
+                    chest.unlockChest(sender)
                     sender.sendMessage("Chest unlocked.")
                 else:
                     sender.sendMessage("You do not own this chest. You can't unlock it.")
             else:
                 sender.sendMessage("This chest is not locked.")
     elif args[0] == "info" and sender.hasPermission("chestlocker.info"):
+        #print sender, type(sender)
         player.showInfo()
         
         if sender.hasPermission("chestlocker.globalinfo"):
             pass
     elif args[0] == "credit" and sender.hasPermission("chestlocker.credit"):
-        player = Player(sender.getName())
+        player = Player(sender)
         if len(args) >= 3:
             p = Player(args[1])
             p.addCredit(args[2])
@@ -362,7 +375,7 @@ def onBlockDamange(event):
 @hook.event("player_interact", "high")
 def onPlayerIntreact(event): # Stops a user from opening a locked chest.
     block = event.getClickedBlock()
-    player = Player(event.getPlayer().getName())
+    player = Player(event.getPlayer())
     if not type(block) is NoneType:
         if str(block.type) == "CHEST":
             chest = Chest(block)
