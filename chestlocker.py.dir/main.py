@@ -330,7 +330,8 @@ def cl(sender, args):
         player.showInfo()
         
         if sender.hasPermission("chestlocker.globalinfo"):
-            pass
+            player.msg("There are currently %s chests in the database." % len(db['chests']))
+            
     elif args[0] == "credit" and sender.hasPermission("chestlocker.credit"):
         player = Player(sender)
         if len(args) >= 3:
