@@ -109,7 +109,7 @@ class Chest:
     
     def isOwner(self, player):
         if self.chest != None:
-            if str(self.owner) == str(player):
+            if str(self.owner) == str(Player(player)):
                 return 1
         return 0
     
@@ -137,7 +137,7 @@ class Chest:
 
 class Player:
     def __init__(self, player):
-        if type(player) == str:
+        if type(player) == str or type(player) == unicode:
             self.name = player
             self.b = bukkit.getPlayerExact(self.name) # bukkit class for player
         elif type(player) == org.bukkit.craftbukkit.entity.CraftPlayer:
@@ -146,6 +146,9 @@ class Player:
         elif type(player) == org.bukkit.craftbukkit.command.ColouredConsoleSender:
             self.b = player
             self.name = "Console"
+        elif player == Player:
+            self.b = player.b
+            self.name = player.name
         else:
             print "ERROR: Could not find player", type(player), player
             raise ValueError
