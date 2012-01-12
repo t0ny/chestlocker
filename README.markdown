@@ -37,6 +37,10 @@ The config file is named **chestlocker.cfg** located in the **plugins** folder. 
 * /cl info
 	* Shows some information about your chests and credits.
 
+## Notes ##
+ 
+ * The user name in "/cl credit" is case sensitive. 
+
 ## Permissions ##
 
 See the plugin.yml file. I'll update the readme soon.

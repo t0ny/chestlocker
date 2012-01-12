@@ -150,8 +150,13 @@ class Player:
             self.b = player.b
             self.name = player.name
         else:
-            print "ERROR: Could not find player", type(player), player
-            raise ValueError
+            #last ditch attempt
+            try:
+                self.name = str(player)
+                self.b = bukkit.getPlayerExact(self.name)
+            except:
+                print "ERROR: Could not find player", type(player), player
+                raise ValueError
         
     def __str__(self):
         return self.name
